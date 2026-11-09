@@ -2,4 +2,23 @@
     <string name="app_name">Multi-converter</string>
     <string name="titulo">Elige una categoría</string>
     <string name="btn_continuar">Continuar</string>
+
+    <string name="title_unknown_category">Unknown category</string>
+    <string name="hint_value">Enter a value</string>
+    <string name="label_from">From</string>
+    <string name="label_to">To</string>
+    <string name="select_unit">Select a unit</string>
+    <string name="action_swap">Swap units</string>
+    <string name="action_convert">Convert</string>
+    <string name="action_back">Choose another category</string>
+    <string name="result_placeholder">The result will appear here</string>
+    <string name="result_format">%1$s %2$s = %3$s %4$s</string>
+
+    <string name="msg_no_category">No category received. Go back and choose one.</string>
+    <string name="msg_empty_value">Enter a value to convert.</string>
+    <string name="msg_invalid_value">That is not a valid number. Check the value.</string>
+    <string name="msg_select_units">Select both a source and a target unit.</string>
+    <string name="msg_same_units">Choose two different units to convert.</string>
+    <string name="msg_too_large">The result is too large to display. Try a smaller value.</string>
+    <string name="msg_success">Conversion completed.</string>
 </resources>
