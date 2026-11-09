@@ -27,13 +27,13 @@ public class ConversionTest {
 
     @Test
     public void linearConversions() {
-        assertEquals(500000, convert(Category.DISTANCE, 5, "Kilometres", "Centimetres"), DELTA);
-        assertEquals(0.621371, convert(Category.DISTANCE, 1, "Kilometres", "Miles"), DELTA);
-        assertEquals(2.204623, convert(Category.MASS, 1, "Kilograms", "Pounds"), DELTA);
+        assertEquals(500000, convert(Category.DISTANCE, 5, "Kilómetros", "Centímetros"), DELTA);
+        assertEquals(0.621371, convert(Category.DISTANCE, 1, "Kilómetros", "Millas"), DELTA);
+        assertEquals(2.204623, convert(Category.MASS, 1, "Kilogramos", "Libras"), DELTA);
         assertEquals(1024, convert(Category.DIGITAL, 1, "Gigabytes", "Megabytes"), DELTA);
-        assertEquals(1.013250, convert(Category.PRESSURE, 1, "Atmospheres", "Bars"), DELTA);
-        assertEquals(36, convert(Category.SPEED, 10, "Metres per second", "Kilometres per hour"), DELTA);
-        assertEquals(2.471054, convert(Category.AREA, 1, "Hectares", "Acres"), DELTA);
+        assertEquals(1.013250, convert(Category.PRESSURE, 1, "Atmósferas", "Bares"), DELTA);
+        assertEquals(36, convert(Category.SPEED, 10, "Metros por segundo", "Kilómetros por hora"), DELTA);
+        assertEquals(2.471054, convert(Category.AREA, 1, "Hectáreas", "Acres"), DELTA);
     }
 
     @Test
@@ -59,8 +59,8 @@ public class ConversionTest {
 
     @Test
     public void rangeDependsOnCategory() {
-        assertFalse(Category.DISTANCE.isInRange(-1, unit(Category.DISTANCE, "Metres")));
-        assertTrue(Category.DISTANCE.isInRange(0, unit(Category.DISTANCE, "Metres")));
+        assertFalse(Category.DISTANCE.isInRange(-1, unit(Category.DISTANCE, "Metros")));
+        assertTrue(Category.DISTANCE.isInRange(0, unit(Category.DISTANCE, "Metros")));
         assertTrue(Category.TEMPERATURE.isInRange(-40, unit(Category.TEMPERATURE, "Celsius")));
         assertFalse(Category.TEMPERATURE.isInRange(-300, unit(Category.TEMPERATURE, "Celsius")));
         assertFalse(Category.TEMPERATURE.isInRange(-1, unit(Category.TEMPERATURE, "Kelvin")));
@@ -69,13 +69,13 @@ public class ConversionTest {
     }
 
     @Test
-    public void fromKeyFindsTheCategoriesSentByActivityOne() {
-        assertSame(Category.DISTANCE, Category.fromKey("Distancia"));
-        assertSame(Category.TEMPERATURE, Category.fromKey("Temperatura"));
-        assertSame(Category.MASS, Category.fromKey("Masa"));
-        assertSame(Category.TIME, Category.fromKey("Tiempo"));
-        assertNull(Category.fromKey("distancia"));
-        assertNull(Category.fromKey("DISTANCE"));
-        assertNull(Category.fromKey(null));
+    public void fromLabelFindsTheCategoriesSentByActivityOne() {
+        assertSame(Category.DISTANCE, Category.fromLabel("Distancia"));
+        assertSame(Category.TEMPERATURE, Category.fromLabel("Temperatura"));
+        assertSame(Category.MASS, Category.fromLabel("Masa"));
+        assertSame(Category.TIME, Category.fromLabel("Tiempo"));
+        assertNull(Category.fromLabel("distancia"));
+        assertNull(Category.fromLabel("DISTANCE"));
+        assertNull(Category.fromLabel(null));
     }
 }

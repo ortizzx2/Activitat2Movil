@@ -56,7 +56,7 @@ public class ConversionActivity extends AppCompatActivity {
         findViewById(R.id.btnSwap).setOnClickListener(v -> swapUnits());
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        category = Category.fromKey(getIntent().getStringExtra(EXTRA_CATEGORY));
+        category = Category.fromLabel(getIntent().getStringExtra(EXTRA_CATEGORY));
         if (category == null) {
             showMissingCategory();
         } else {
