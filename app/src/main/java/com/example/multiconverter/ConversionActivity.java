@@ -52,6 +52,7 @@ public class ConversionActivity extends AppCompatActivity {
         spTarget = findViewById(R.id.spTarget);
         tvResult = findViewById(R.id.tvResult);
         findViewById(R.id.btnConvert).setOnClickListener(v -> convert());
+        findViewById(R.id.btnSwap).setOnClickListener(v -> swapUnits());
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         category = Category.fromName(getIntent().getStringExtra(EXTRA_CATEGORY));
@@ -91,6 +92,17 @@ public class ConversionActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSource.setAdapter(adapter);
         spTarget.setAdapter(adapter);
+    }
+
+    private void swapUnits() {
+        int source = spSource.getSelectedItemPosition();
+        int target = spTarget.getSelectedItemPosition();
+        if (source == NO_UNIT || target == NO_UNIT) {
+            showMessage(getText(R.string.msg_select_units));
+            return;
+        }
+        spSource.setSelection(target);
+        spTarget.setSelection(source);
     }
 
     private void convert() {
