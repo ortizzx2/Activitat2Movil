@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Multi Conversor</string>
+    <string name="titulo">Elige una categoría</string>
+    <string name="btn_continuar">Continuar</string>
+</resources>
