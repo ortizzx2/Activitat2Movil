@@ -69,9 +69,13 @@ public class ConversionTest {
     }
 
     @Test
-    public void fromNameFindsKnownCategoriesOnly() {
-        assertSame(Category.AREA, Category.fromName("AREA"));
-        assertNull(Category.fromName("NOPE"));
-        assertNull(Category.fromName(null));
+    public void fromKeyFindsTheCategoriesSentByActivityOne() {
+        assertSame(Category.DISTANCE, Category.fromKey("Distancia"));
+        assertSame(Category.TEMPERATURE, Category.fromKey("Temperatura"));
+        assertSame(Category.MASS, Category.fromKey("Masa"));
+        assertSame(Category.TIME, Category.fromKey("Tiempo"));
+        assertNull(Category.fromKey("distancia"));
+        assertNull(Category.fromKey("DISTANCE"));
+        assertNull(Category.fromKey(null));
     }
 }

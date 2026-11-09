@@ -23,7 +23,8 @@ import java.util.Locale;
 /** Activity 2: converts a value between the units of the category received in the Intent. */
 public class ConversionActivity extends AppCompatActivity {
 
-    public static final String EXTRA_CATEGORY = "com.example.multiconverter.CATEGORY";
+    /** Same name as MainActivity.EXTRA_CATEGORIA in Activity 1. */
+    public static final String EXTRA_CATEGORY = "categoria";
 
     private static final int NO_UNIT = 0;
 
@@ -55,7 +56,7 @@ public class ConversionActivity extends AppCompatActivity {
         findViewById(R.id.btnSwap).setOnClickListener(v -> swapUnits());
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        category = Category.fromName(getIntent().getStringExtra(EXTRA_CATEGORY));
+        category = Category.fromKey(getIntent().getStringExtra(EXTRA_CATEGORY));
         if (category == null) {
             showMissingCategory();
         } else {

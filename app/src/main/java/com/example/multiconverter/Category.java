@@ -7,12 +7,12 @@ import java.util.List;
  * Every conversion category and its units. This table is the only place to edit
  * when adding a unit or a category. The comment above each entry names its base unit.
  *
- * Activity 1 must send category.name() through ConversionActivity.EXTRA_CATEGORY.
+ * The first text of each entry is its key: the exact text Activity 1 sends in the Intent.
  */
 public enum Category {
 
     // Base: metre
-    DISTANCE("Distance",
+    DISTANCE("Distancia", "Distance",
             new Unit("Millimetres", 0.001),
             new Unit("Centimetres", 0.01),
             new Unit("Metres", 1),
@@ -24,13 +24,13 @@ public enum Category {
             new Unit("Nautical miles", 1852)),
 
     // Base: degree Celsius. Only category that allows negative values, down to absolute zero.
-    TEMPERATURE("Temperature", -273.15, "The temperature cannot be below absolute zero.", null,
+    TEMPERATURE("Temperatura", "Temperature", -273.15, "The temperature cannot be below absolute zero.", null,
             new Unit("Celsius", 1),
             new Unit("Fahrenheit", 5.0 / 9.0, -32),
             new Unit("Kelvin", 1, -273.15)),
 
     // Base: litre
-    VOLUME("Volume",
+    VOLUME("Volumen", "Volume",
             new Unit("Millilitres", 0.001),
             new Unit("Litres", 1),
             new Unit("Cubic metres", 1000),
@@ -41,7 +41,7 @@ public enum Category {
             new Unit("UK gallons", 4.54609)),
 
     // Base: gram
-    MASS("Mass and Weight",
+    MASS("Masa", "Mass and Weight",
             new Unit("Milligrams", 0.001),
             new Unit("Grams", 1),
             new Unit("Kilograms", 1000),
@@ -51,7 +51,7 @@ public enum Category {
             new Unit("Stones", 6350.29318)),
 
     // Base: second
-    TIME("Time",
+    TIME("Tiempo", "Time",
             new Unit("Milliseconds", 0.001),
             new Unit("Seconds", 1),
             new Unit("Minutes", 60),
@@ -61,7 +61,7 @@ public enum Category {
             new Unit("Years (365 days)", 31536000)),
 
     // Base: byte
-    DIGITAL("Digital Information", "1 kilobyte = 1024 bytes.",
+    DIGITAL("Información digital", "Digital Information", "1 kilobyte = 1024 bytes.",
             new Unit("Bits", 0.125),
             new Unit("Bytes", 1),
             new Unit("Kilobytes", 1024),
@@ -70,7 +70,7 @@ public enum Category {
             new Unit("Terabytes", 1099511627776.0)),
 
     // Base: euro. Factor = value of one unit of the currency in euros.
-    CURRENCY("Currency", "Sample exchange rates for demonstration only. They are fixed and never updated.",
+    CURRENCY("Moneda", "Currency", "Sample exchange rates for demonstration only. They are fixed and never updated.",
             new Unit("Euros", 1),
             new Unit("US dollars", 0.90),
             new Unit("British pounds", 1.15),
@@ -78,7 +78,7 @@ public enum Category {
             new Unit("Japanese yen", 0.0060)),
 
     // Base: square metre
-    AREA("Area",
+    AREA("Área", "Area",
             new Unit("Square centimetres", 0.0001),
             new Unit("Square metres", 1),
             new Unit("Square feet", 0.09290304),
@@ -89,7 +89,7 @@ public enum Category {
             new Unit("Square miles", 2589988.110336)),
 
     // Base: metre per second
-    SPEED("Speed",
+    SPEED("Velocidad", "Speed",
             new Unit("Metres per second", 1),
             new Unit("Kilometres per hour", 1 / 3.6),
             new Unit("Miles per hour", 0.44704),
@@ -97,7 +97,7 @@ public enum Category {
             new Unit("Knots", 1852.0 / 3600.0)),
 
     // Base: pascal
-    PRESSURE("Pressure",
+    PRESSURE("Presión", "Pressure",
             new Unit("Pascals", 1),
             new Unit("Hectopascals", 100),
             new Unit("Kilopascals", 1000),
@@ -109,21 +109,23 @@ public enum Category {
     /** Absorbs rounding errors when a value is exactly at the minimum, such as -459.67 F. */
     private static final double TOLERANCE = 1e-9;
 
+    private final String key;
     private final String label;
     private final double minimumBase;
     private final String rangeError;
     private final String note;
     private final List<Unit> units;
 
-    Category(String label, Unit... units) {
-        this(label, null, units);
+    Category(String key, String label, Unit... units) {
+        this(key, label, null, units);
     }
 
-    Category(String label, String note, Unit... units) {
-        this(label, 0, "The value cannot be negative.", note, units);
+    Category(String key, String label, String note, Unit... units) {
+        this(key, label, 0, "The value cannot be negative.", note, units);
     }
 
-    Category(String label, double minimumBase, String rangeError, String note, Unit... units) {
+    Category(String key, String label, double minimumBase, String rangeError, String note, Unit... units) {
+        this.key = key;
         this.label = label;
         this.minimumBase = minimumBase;
         this.rangeError = rangeError;
@@ -131,14 +133,18 @@ public enum Category {
         this.units = Arrays.asList(units);
     }
 
-    /** Returns the category with that enum name, or null if there is none. */
-    public static Category fromName(String name) {
+    /** Returns the category with that key, or null if there is none. */
+    public static Category fromKey(String key) {
         for (Category category : values()) {
-            if (category.name().equals(name)) {
+            if (category.key.equals(key)) {
                 return category;
             }
         }
         return null;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public String getLabel() {
