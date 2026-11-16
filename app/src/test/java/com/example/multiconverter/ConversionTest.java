@@ -45,6 +45,23 @@ public class ConversionTest {
     }
 
     @Test
+    public void everyCategoryHasTenUnitsExceptTemperature() {
+        for (Category category : Category.values()) {
+            int expected = category == Category.TEMPERATURE ? 3 : 10;
+            assertEquals(category.getLabel(), expected, category.getUnits().size());
+        }
+    }
+
+    @Test
+    public void commonUnitsConvertAsExpected() {
+        assertEquals(1, convert(Category.MASS, 10, "Decagramos", "Hectogramos"), DELTA);
+        assertEquals(3, convert(Category.VOLUME, 1, "Cucharadas (15 ml)", "Cucharaditas (5 ml)"), DELTA);
+        assertEquals(100, convert(Category.TIME, 1, "Siglos", "Años (365 días)"), DELTA);
+        assertEquals(14.223343, convert(Category.PRESSURE, 1,
+                "Kilogramos por centímetro cuadrado", "PSI (libras por pulgada cuadrada)"), DELTA);
+    }
+
+    @Test
     public void everyUnitPairRoundTrips() {
         for (Category category : Category.values()) {
             for (Unit from : category.getUnits()) {
