@@ -5,6 +5,7 @@
 
     <string name="title_unknown_category">Categoría desconocida</string>
     <string name="hint_value">Introduce un valor</string>
+    <string name="hint_value_no_negatives">Introduce un valor (sin negativos)</string>
     <string name="label_from">Origen</string>
     <string name="label_to">Destino</string>
     <string name="select_unit">Selecciona una unidad</string>

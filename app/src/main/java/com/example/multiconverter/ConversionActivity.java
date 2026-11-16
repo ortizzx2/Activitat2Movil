@@ -1,6 +1,7 @@
 package com.example.multiconverter;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
@@ -73,6 +74,17 @@ public class ConversionActivity extends AppCompatActivity {
         TextView title = findViewById(R.id.tvCategoryTitle);
         title.setText(category.getLabel());
 
+        // Without negatives the keyboard does not show the minus sign. The value is
+        // still checked when converting, because a negative number can be pasted.
+        int inputType = InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL;
+        if (category.allowsNegatives()) {
+            inputType |= InputType.TYPE_NUMBER_FLAG_SIGNED;
+            etValue.setHint(R.string.hint_value);
+        } else {
+            etValue.setHint(R.string.hint_value_no_negatives);
+        }
+        etValue.setInputType(inputType);
+
         if (category.getNote() != null) {
             TextView note = findViewById(R.id.tvNote);
             note.setText(category.getNote());
@@ -131,8 +143,9 @@ public class ConversionActivity extends AppCompatActivity {
 
         Unit from = category.getUnits().get(source - 1);
         Unit to = category.getUnits().get(target - 1);
-        if (!category.isInRange(value, from)) {
-            showMessage(category.getRangeError());
+        String error = category.checkValue(value, from);
+        if (error != null) {
+            showMessage(error);
             return;
         }
 
