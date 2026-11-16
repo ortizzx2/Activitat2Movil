@@ -74,15 +74,37 @@ public class ConversionTest {
         }
     }
 
+    private static boolean accepts(Category category, double value, String unitName) {
+        return category.checkValue(value, unit(category, unitName)) == null;
+    }
+
     @Test
-    public void rangeDependsOnCategory() {
-        assertFalse(Category.DISTANCE.isInRange(-1, unit(Category.DISTANCE, "Metros")));
-        assertTrue(Category.DISTANCE.isInRange(0, unit(Category.DISTANCE, "Metros")));
-        assertTrue(Category.TEMPERATURE.isInRange(-40, unit(Category.TEMPERATURE, "Celsius")));
-        assertFalse(Category.TEMPERATURE.isInRange(-300, unit(Category.TEMPERATURE, "Celsius")));
-        assertFalse(Category.TEMPERATURE.isInRange(-1, unit(Category.TEMPERATURE, "Kelvin")));
-        assertTrue(Category.TEMPERATURE.isInRange(0, unit(Category.TEMPERATURE, "Kelvin")));
-        assertTrue(Category.TEMPERATURE.isInRange(-459.67, unit(Category.TEMPERATURE, "Fahrenheit")));
+    public void onlyTemperatureAllowsNegatives() {
+        for (Category category : Category.values()) {
+            assertEquals(category.getLabel(),
+                    category == Category.TEMPERATURE, category.allowsNegatives());
+        }
+    }
+
+    @Test
+    public void negativeValuesDependOnCategory() {
+        assertFalse(accepts(Category.TIME, -1, "Segundos"));
+        assertTrue(accepts(Category.TIME, 0, "Segundos"));
+        assertFalse(accepts(Category.DISTANCE, -0.5, "Metros"));
+        assertTrue(accepts(Category.DISTANCE, 0, "Metros"));
+        assertFalse(accepts(Category.MASS, -3, "Kilogramos"));
+        assertEquals("Tiempo no admite valores negativos.",
+                Category.TIME.checkValue(-1, unit(Category.TIME, "Segundos")));
+    }
+
+    @Test
+    public void temperatureAllowsNegativesDownToAbsoluteZero() {
+        assertTrue(accepts(Category.TEMPERATURE, -40, "Celsius"));
+        assertTrue(accepts(Category.TEMPERATURE, -273.15, "Celsius"));
+        assertFalse(accepts(Category.TEMPERATURE, -300, "Celsius"));
+        assertFalse(accepts(Category.TEMPERATURE, -1, "Kelvin"));
+        assertTrue(accepts(Category.TEMPERATURE, 0, "Kelvin"));
+        assertTrue(accepts(Category.TEMPERATURE, -459.67, "Fahrenheit"));
     }
 
     @Test

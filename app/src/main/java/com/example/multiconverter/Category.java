@@ -13,7 +13,7 @@ import java.util.List;
 public enum Category {
 
     // Base: metre
-    DISTANCE("Distancia",
+    DISTANCE("Distancia", Negatives.NOT_ALLOWED,
             new Unit("Milímetros", 0.001),
             new Unit("Centímetros", 0.01),
             new Unit("Decímetros", 0.1),
@@ -25,15 +25,16 @@ public enum Category {
             new Unit("Millas", 1609.344),
             new Unit("Millas náuticas", 1852)),
 
-    // Base: degree Celsius. Only category that allows negative values, down to absolute zero.
+    // Base: degree Celsius. Allows negative values, but never below absolute zero.
     // Only the three scales in real use; there are no other well-known temperature units.
-    TEMPERATURE("Temperatura", -273.15, "La temperatura no puede ser inferior al cero absoluto.", null,
+    TEMPERATURE("Temperatura", Negatives.ALLOWED,
+            -273.15, "La temperatura no puede ser inferior al cero absoluto.",
             new Unit("Celsius", 1),
             new Unit("Fahrenheit", 5.0 / 9.0, -32),
             new Unit("Kelvin", 1, -273.15)),
 
     // Base: litre
-    VOLUME("Volumen",
+    VOLUME("Volumen", Negatives.NOT_ALLOWED,
             new Unit("Mililitros", 0.001),
             new Unit("Centilitros", 0.01),
             new Unit("Decilitros", 0.1),
@@ -46,7 +47,7 @@ public enum Category {
             new Unit("Galones (EE. UU.)", 3.785411784)),
 
     // Base: gram
-    MASS("Masa",
+    MASS("Masa", Negatives.NOT_ALLOWED,
             new Unit("Miligramos", 0.001),
             new Unit("Centigramos", 0.01),
             new Unit("Decigramos", 0.1),
@@ -59,7 +60,7 @@ public enum Category {
             new Unit("Libras", 453.59237)),
 
     // Base: second
-    TIME("Tiempo",
+    TIME("Tiempo", Negatives.NOT_ALLOWED,
             new Unit("Milisegundos", 0.001),
             new Unit("Segundos", 1),
             new Unit("Minutos", 60),
@@ -72,7 +73,7 @@ public enum Category {
             new Unit("Siglos", 3153600000.0)),
 
     // Base: byte
-    DIGITAL("Información digital", "1 kilobyte = 1024 bytes y 1 kilobit = 1024 bits.",
+    DIGITAL("Información digital", Negatives.NOT_ALLOWED, "1 kilobyte = 1024 bytes y 1 kilobit = 1024 bits.",
             new Unit("Bits", 0.125),
             new Unit("Bytes", 1),
             new Unit("Kilobits", 128),
@@ -85,7 +86,7 @@ public enum Category {
             new Unit("Petabytes", 1125899906842624.0)),
 
     // Base: euro. Factor = value of one unit of the currency in euros.
-    CURRENCY("Moneda", "Tipos de cambio de ejemplo, solo para demostración. Son fijos y no se actualizan.",
+    CURRENCY("Moneda", Negatives.NOT_ALLOWED, "Tipos de cambio de ejemplo, solo para demostración. Son fijos y no se actualizan.",
             new Unit("Euros", 1),
             new Unit("Dólares estadounidenses", 0.90),
             new Unit("Libras esterlinas", 1.15),
@@ -98,7 +99,7 @@ public enum Category {
             new Unit("Reales brasileños", 0.16)),
 
     // Base: square metre
-    AREA("Área",
+    AREA("Área", Negatives.NOT_ALLOWED,
             new Unit("Milímetros cuadrados", 0.000001),
             new Unit("Centímetros cuadrados", 0.0001),
             new Unit("Decímetros cuadrados", 0.01),
@@ -111,7 +112,7 @@ public enum Category {
             new Unit("Millas cuadradas", 2589988.110336)),
 
     // Base: metre per second
-    SPEED("Velocidad",
+    SPEED("Velocidad", Negatives.NOT_ALLOWED,
             new Unit("Centímetros por segundo", 0.01),
             new Unit("Metros por minuto", 1.0 / 60.0),
             new Unit("Metros por segundo", 1),
@@ -124,7 +125,7 @@ public enum Category {
             new Unit("Velocidad de la luz", 299792458)),
 
     // Base: pascal
-    PRESSURE("Presión",
+    PRESSURE("Presión", Negatives.NOT_ALLOWED,
             new Unit("Pascales", 1),
             new Unit("Hectopascales", 100),
             new Unit("Milibares", 100),
@@ -136,28 +137,39 @@ public enum Category {
             new Unit("Atmósferas", 101325),
             new Unit("Megapascales", 1000000));
 
+    /** Whether a category accepts values below zero. Every category above states it. */
+    public enum Negatives { ALLOWED, NOT_ALLOWED }
+
     /** Absorbs rounding errors when a value is exactly at the minimum, such as -459.67 F. */
     private static final double TOLERANCE = 1e-9;
 
     private final String label;
+    private final Negatives negatives;
     private final double minimumBase;
-    private final String rangeError;
+    private final String minimumError;
     private final String note;
     private final List<Unit> units;
 
-    Category(String label, Unit... units) {
-        this(label, null, units);
+    Category(String label, Negatives negatives, Unit... units) {
+        this(label, negatives, (String) null, units);
     }
 
-    Category(String label, String note, Unit... units) {
-        this(label, 0, "El valor no puede ser negativo.", note, units);
+    Category(String label, Negatives negatives, String note, Unit... units) {
+        this(label, negatives, note, Double.NEGATIVE_INFINITY, null, units);
     }
 
-    Category(String label, double minimumBase, String rangeError, String note, Unit... units) {
+    /** For a category with a physical lower limit, such as absolute zero for temperature. */
+    Category(String label, Negatives negatives, double minimumBase, String minimumError, Unit... units) {
+        this(label, negatives, null, minimumBase, minimumError, units);
+    }
+
+    Category(String label, Negatives negatives, String note,
+             double minimumBase, String minimumError, Unit... units) {
         this.label = label;
-        this.minimumBase = minimumBase;
-        this.rangeError = rangeError;
+        this.negatives = negatives;
         this.note = note;
+        this.minimumBase = minimumBase;
+        this.minimumError = minimumError;
         this.units = Arrays.asList(units);
     }
 
@@ -175,8 +187,8 @@ public enum Category {
         return label;
     }
 
-    public String getRangeError() {
-        return rangeError;
+    public boolean allowsNegatives() {
+        return negatives == Negatives.ALLOWED;
     }
 
     /** Extra information to show with this category, or null if it has none. */
@@ -188,7 +200,14 @@ public enum Category {
         return units;
     }
 
-    public boolean isInRange(double value, Unit unit) {
-        return unit.toBase(value) >= minimumBase - TOLERANCE;
+    /** Returns why the value cannot be converted from that unit, or null if it can. */
+    public String checkValue(double value, Unit unit) {
+        if (!allowsNegatives() && value < 0) {
+            return label + " no admite valores negativos.";
+        }
+        if (unit.toBase(value) < minimumBase - TOLERANCE) {
+            return minimumError;
+        }
+        return null;
     }
 }
