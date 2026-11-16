@@ -23,19 +23,56 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     // Clave con la que viaja la categoría a la Activity 2
     public static final String EXTRA_CATEGORIA = "categoria";
 
-    // Posición 0 = "sin elegir". Las dos listas van en paralelo
-    private final String[] categorias = {"Elige una categoría...", "Distancia", "Temperatura", "Masa", "Tiempo"};
-    private final int[] imagenes = {0, R.drawable.distancia, R.drawable.temperatura, R.drawable.masa, R.drawable.tiempo};
+    /** Aspecto de cada categoría: imagen, color de acento y descripción corta. */
+    private static final class Aspecto {
+        final int imagen;
+        final int color;
+        final String descripcion;
 
-    // Solo visual: texto y color de acento de cada categoría (mismo orden que arriba)
-    private final String[] descripciones = {"", "Metros, kilómetros, millas y más", "Celsius, Fahrenheit y Kelvin",
-            "Gramos, kilos, libras y onzas", "Segundos, minutos, horas y días"};
-    private final int[] colores = {0, R.color.cat_distancia, R.color.cat_temperatura, R.color.cat_masa, R.color.cat_tiempo};
+        Aspecto(int imagen, int color, String descripcion) {
+            this.imagen = imagen;
+            this.color = color;
+            this.descripcion = descripcion;
+        }
+    }
+
+    private static final Map<Category, Aspecto> ASPECTOS = new EnumMap<>(Category.class);
+
+    static {
+        ASPECTOS.put(Category.DISTANCE, new Aspecto(R.drawable.distancia, R.color.cat_distancia,
+                "Metros, kilómetros, millas y más"));
+        ASPECTOS.put(Category.TEMPERATURE, new Aspecto(R.drawable.temperatura, R.color.cat_temperatura,
+                "Celsius, Fahrenheit y Kelvin"));
+        ASPECTOS.put(Category.VOLUME, new Aspecto(R.drawable.volumen, R.color.cat_volumen,
+                "Litros, galones, tazas y más"));
+        ASPECTOS.put(Category.MASS, new Aspecto(R.drawable.masa, R.color.cat_masa,
+                "Gramos, kilos, libras y onzas"));
+        ASPECTOS.put(Category.TIME, new Aspecto(R.drawable.tiempo, R.color.cat_tiempo,
+                "Segundos, minutos, horas y días"));
+        ASPECTOS.put(Category.DIGITAL, new Aspecto(R.drawable.informacion_digital, R.color.cat_digital,
+                "Bytes, megabytes, gigabytes y más"));
+        ASPECTOS.put(Category.CURRENCY, new Aspecto(R.drawable.moneda, R.color.cat_moneda,
+                "Euros, dólares, libras y yenes"));
+        ASPECTOS.put(Category.AREA, new Aspecto(R.drawable.area, R.color.cat_area,
+                "Metros cuadrados, hectáreas y acres"));
+        ASPECTOS.put(Category.SPEED, new Aspecto(R.drawable.velocidad, R.color.cat_velocidad,
+                "Km/h, millas por hora y nudos"));
+        ASPECTOS.put(Category.PRESSURE, new Aspecto(R.drawable.presion, R.color.cat_presion,
+                "Pascales, bares, atmósferas y PSI"));
+    }
+
+    // Posición 0 = "sin elegir"; la posición p >= 1 es categorias.get(p - 1)
+    private final List<Category> categorias = new ArrayList<>();
 
     private Spinner spinnerCategoria;
     private ImageView ivCategoria;
@@ -60,14 +97,21 @@ public class MainActivity extends AppCompatActivity {
         spinnerCategoria = findViewById(R.id.spinnerCategoria);
         ivCategoria = findViewById(R.id.ivCategoria);
         btnContinuar = findViewById(R.id.btnContinuar);
-
         layoutHint = findViewById(R.id.layoutHint);
         layoutContenido = findViewById(R.id.layoutContenido);
         viewHalo = findViewById(R.id.viewHalo);
         tvNombre = findViewById(R.id.tvNombre);
         tvDescripcion = findViewById(R.id.tvDescripcion);
 
-        ArrayAdapter<String> adaptador = new ArrayAdapter<>(this, R.layout.spinner_item, categorias);
+        // Las categorías salen de la tabla Category: añadir una allí la añade aquí
+        List<String> nombres = new ArrayList<>();
+        nombres.add(getString(R.string.elige_categoria));
+        for (Category categoria : Category.values()) {
+            categorias.add(categoria);
+            nombres.add(categoria.getLabel());
+        }
+
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(this, R.layout.spinner_item, nombres);
         adaptador.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerCategoria.setAdapter(adaptador);
 
@@ -93,17 +137,20 @@ public class MainActivity extends AppCompatActivity {
             layoutContenido.setVisibility(View.GONE);
             return;
         }
+        Category categoria = categorias.get(posicion - 1);
+        Aspecto aspecto = ASPECTOS.get(categoria);
+
         layoutHint.setVisibility(View.GONE);
         layoutContenido.setVisibility(View.VISIBLE);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), imagenes[posicion]);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), aspecto.imagen);
         bmp = Bitmap.createScaledBitmap(bmp, 400, 400, true);
         ivCategoria.setImageBitmap(bmp);
 
         // Halo de color suave detrás de la imagen + nombre y descripción
-        int color = ContextCompat.getColor(this, colores[posicion]);
+        int color = ContextCompat.getColor(this, aspecto.color);
         viewHalo.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 46)));
-        tvNombre.setText(categorias[posicion]);
-        tvDescripcion.setText(descripciones[posicion]);
+        tvNombre.setText(categoria.getLabel());
+        tvDescripcion.setText(aspecto.descripcion);
 
         // Pequeña animación de entrada para que el cambio se vea suave
         layoutContenido.setAlpha(0f);
@@ -115,11 +162,11 @@ public class MainActivity extends AppCompatActivity {
     private void continuar() {
         int posicion = spinnerCategoria.getSelectedItemPosition();
         if (posicion == 0) {
-            Snackbar.make(findViewById(R.id.main), "Elige una categoría para continuar", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.main), R.string.msg_elige_categoria, Snackbar.LENGTH_LONG).show();
             return;
         }
         Intent intent = new Intent(this, ConversionActivity.class);
-        intent.putExtra(EXTRA_CATEGORIA, categorias[posicion]);
+        intent.putExtra(EXTRA_CATEGORIA, categorias.get(posicion - 1).getLabel());
         startActivity(intent);
     }
 }

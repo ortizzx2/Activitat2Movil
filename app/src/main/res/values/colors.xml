@@ -16,6 +16,12 @@
     <color name="cat_temperatura">#F97316</color>
     <color name="cat_masa">#10B981</color>
     <color name="cat_tiempo">#EC4899</color>
+    <color name="cat_volumen">#0EA5E9</color>
+    <color name="cat_digital">#64748B</color>
+    <color name="cat_moneda">#84CC16</color>
+    <color name="cat_area">#14B8A6</color>
+    <color name="cat_velocidad">#EF4444</color>
+    <color name="cat_presion">#F59E0B</color>
     <color name="header_text">#FFFFFF</color>
     <color name="header_text_soft">#CCFFFFFF</color>
 </resources>
