@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#4F46E5</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#E0E7FF</color>
+    <color name="on_primary_container">#1E1B6B</color>
+    <color name="secondary">#06B6D4</color>
+    <color name="app_background">#F5F6FB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#1B1B2F</color>
+    <color name="on_surface_variant">#5B5F75</color>
+    <color name="outline">#D5D8E6</color>
+    <color name="gradient_start">#4F46E5</color>
+    <color name="gradient_end">#8B5CF6</color>
+    <color name="cat_distancia">#3B82F6</color>
+    <color name="cat_temperatura">#F97316</color>
+    <color name="cat_masa">#10B981</color>
+    <color name="cat_tiempo">#EC4899</color>
+    <color name="header_text">#FFFFFF</color>
+    <color name="header_text_soft">#CCFFFFFF</color>
+</resources>

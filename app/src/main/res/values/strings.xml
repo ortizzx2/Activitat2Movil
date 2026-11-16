@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Multi-converter</string>
     <string name="titulo">Elige una categoría</string>
+    <string name="subtitulo">Convierte distancia, temperatura, masa y tiempo en un toque</string>
+    <string name="etiqueta_categoria">Categoría</string>
+    <string name="hint_imagen">Tu categoría aparecerá aquí</string>
+    <string name="desc_imagen">Imagen de la categoría elegida</string>
     <string name="btn_continuar">Continuar</string>
 
     <string name="title_unknown_category">Categoría desconocida</string>
