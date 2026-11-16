@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class ConversionActivity extends AppCompatActivity {
 
     private View root;
     private EditText etValue;
+    private TextInputLayout tilValue;
     private Spinner spSource;
     private Spinner spTarget;
     private TextView tvResult;
@@ -47,6 +49,7 @@ public class ConversionActivity extends AppCompatActivity {
         });
 
         etValue = findViewById(R.id.etValue);
+        tilValue = findViewById(R.id.tilValue);
         spSource = findViewById(R.id.spSource);
         spTarget = findViewById(R.id.spTarget);
         tvResult = findViewById(R.id.tvResult);
@@ -79,9 +82,9 @@ public class ConversionActivity extends AppCompatActivity {
         int inputType = InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL;
         if (category.allowsNegatives()) {
             inputType |= InputType.TYPE_NUMBER_FLAG_SIGNED;
-            etValue.setHint(R.string.hint_value);
+            tilValue.setHint(R.string.hint_value);
         } else {
-            etValue.setHint(R.string.hint_value_no_negatives);
+            tilValue.setHint(R.string.hint_value_no_negatives);
         }
         etValue.setInputType(inputType);
 
